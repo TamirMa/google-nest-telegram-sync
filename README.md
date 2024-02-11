@@ -33,7 +33,7 @@ This module is for personal use only. Using it is at your own risk!
 
 * Create a .env file in the following format
 
-```env
+```dotenv
 GOOGLE_MASTER_TOKEN="aas_..."
 GOOGLE_USERNAME="youremailaddress@gmail.com"
 TELEGRAM_BOT_TOKEN="token..."
@@ -76,4 +76,5 @@ for nest_device in self._nest_camera_devices:
 ## Credits:
 
 Much credits for the authors of the [**glocaltokens**](https://github.com/leikoilja/glocaltokens) module
-Thanks also for the authors of the docker [**Maste Token Retriever**](https://hub.docker.com/r/breph/ha-google-home_get-token)
+
+Thanks also for the authors of the docker [**ha-google-home_get-token**](https://hub.docker.com/r/breph/ha-google-home_get-token)
