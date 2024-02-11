@@ -1,0 +1,5 @@
+python-dotenv==0.21.1
+python-telegram-bot>=20.1
+isodate>=0.6.1
+apscheduler>=3.10.4
+glocaltokens>=0.7.0
