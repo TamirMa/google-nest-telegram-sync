@@ -2,6 +2,7 @@
 # Google Nest Camera Videos <--> Telegram Channel
 
 This is a module created after a joyfull project I've researched. 
+You can find the full story [here](https://medium.com/@tamirmayer/google-nest-camera-internal-api-fdf9dc3ce167)
 
 If you wan't to download your Google Home Nest Cameras videos locally (And tired of paying the monthly Nest Aware Subscription) - this is the script your are looking for.
 
