@@ -1,7 +1,16 @@
+import dateutil.parser
 import isodate
 import datetime
 from typing import Optional
 from pydantic import BaseModel, validator
+
+try:
+    datetime.datetime.fromisoformat('2024-02-24T19:51:58.217Z')
+    z_date_parser = datetime.datetime.fromisoformat
+except ValueError:
+    import dateutil.parser
+    z_date_parser = dateutil.parser.parse
+
 
 class CameraEvent(BaseModel):
     device: object
@@ -24,6 +33,6 @@ class CameraEvent(BaseModel):
     def from_attrib(cls, xml_period_attributes : dict, nest_device):
         return CameraEvent(
             device=nest_device,
-            start_time=datetime.datetime.fromisoformat(xml_period_attributes["programDateTime"]),
+            start_time=z_date_parser(xml_period_attributes["programDateTime"]),
             duration=min(datetime.timedelta(minutes=1), isodate.parse_duration(xml_period_attributes["duration"]))
         )
