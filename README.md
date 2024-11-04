@@ -1,6 +1,9 @@
 
 # Google Nest Camera Videos <--> Telegram Channel
 
+<a href="https://buymeacoffee.com/tamirmayer" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+
 This is a module created after a joyfull project I've researched. 
 You can find the full story [here](https://medium.com/@tamirmayer/google-nest-camera-internal-api-fdf9dc3ce167)
 
@@ -73,6 +76,7 @@ for nest_device in self._nest_camera_devices:
         
 ```
 
+<a href="https://buymeacoffee.com/tamirmayer" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 ## Credits:
 
