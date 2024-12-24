@@ -4,16 +4,11 @@ from google_auth_wrapper import GoogleConnection
 import pytz
 import os
 import datetime
-import secrets
-import string
 
-load_dotenv()  # take environment variables from .env.
-GOOGLE_MASTER_TOKEN = os.getenv("GOOGLE_MASTER_TOKEN")
-GOOGLE_USERNAME = os.getenv("GOOGLE_USERNAME")
-assert GOOGLE_MASTER_TOKEN and GOOGLE_USERNAME
-HOURS_TO_CHECK = 4
+def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
 
-def main():
+    HOURS_TO_CHECK = 5
+
     logger.info("Initializing the Google connection using the master_token")
     google_connection = GoogleConnection(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME)
 
@@ -36,16 +31,18 @@ def main():
             # Sanitize the filename to remove invalid characters
             safe_filename = f"{nest_device.device_name}-{int(event.start_time.timestamp()*1000)}.mp4"
             
-            # Create a directory called 'Videos' if it doesn't exist
-            videos_dir_path = os.path.join(os.getcwd(), 'Videos')
-            os.makedirs(videos_dir_path, exist_ok=True)
-
             # Check if file already exists before saving
-            safe_filename_with_ext = os.path.join(videos_dir_path, safe_filename)
+            safe_filename_with_ext = os.path.join(VIDEO_SAVE_PATH, safe_filename)
             if not os.path.exists(safe_filename_with_ext):
                 with open(safe_filename_with_ext, 'wb') as f:
                     print(f"Saving video to {safe_filename_with_ext}")
                     f.write(video_data)
-    
+
 if __name__ == "__main__":
-    main()
+    load_dotenv()  # take environment variables from .env.
+    GOOGLE_MASTER_TOKEN = os.getenv("GOOGLE_MASTER_TOKEN")
+    GOOGLE_USERNAME = os.getenv("GOOGLE_USERNAME")
+    VIDEO_SAVE_PATH = os.getenv("VIDEO_SAVE_PATH")
+    assert GOOGLE_MASTER_TOKEN and GOOGLE_USERNAME and VIDEO_SAVE_PATH
+    
+    main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH)
