@@ -1,62 +1,49 @@
 from dotenv import load_dotenv
-
-load_dotenv()  # take environment variables from .env.
-
 from tools import logger
 from google_auth_wrapper import GoogleConnection
-from telegram_sync import TelegramEventsSync
-
+import pytz
 import os
 import datetime
-import asyncio
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import secrets
+import string
 
-
+load_dotenv()  # take environment variables from .env.
 GOOGLE_MASTER_TOKEN = os.getenv("GOOGLE_MASTER_TOKEN")
 GOOGLE_USERNAME = os.getenv("GOOGLE_USERNAME")
+assert GOOGLE_MASTER_TOKEN and GOOGLE_USERNAME
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
-
-assert GOOGLE_MASTER_TOKEN and GOOGLE_USERNAME and TELEGRAM_CHANNEL_ID and TELEGRAM_BOT_TOKEN
-
-REFRESH_EVERY_X_MINUTES=2
-
+def generate_random_string(length: int = 10) -> str:
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 def main():
-
-    logger.info("Welcome to the Google Nest Doorbell <-> Telegram Syncer")
-
     logger.info("Initializing the Google connection using the master_token")
     google_connection = GoogleConnection(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME)
 
     logger.info("Getting Camera Devices")
     nest_camera_devices = google_connection.get_nest_camera_devices()
-    logger.info(f"Found {len(nest_camera_devices)} Camera Device{'s' if len(nest_camera_devices) > 1 else ''}")
+    
+    for nest_device in nest_camera_devices:
+        # Get all the events
+        events = nest_device.get_events(
+            end_time = pytz.timezone("US/Central").localize(datetime.datetime.now()),
+            duration_minutes= 4*60 # 3 Hours
+        )
+        
+        print(events)
+        for event in events:
+            # Returns the bytes of the .mp4 video
+            video_data = nest_device.download_camera_event(event)
+            rand_str = generate_random_string()
 
-    tes = TelegramEventsSync(
-        telegram_bot_token=TELEGRAM_BOT_TOKEN, 
-        telegram_channel_id=TELEGRAM_CHANNEL_ID, 
-        nest_camera_devices=nest_camera_devices
-    )
+            # Create a directory called 'Videos' if it doesn't exist
+            videos_dir_path = os.path.join(os.getcwd(), 'Videos')
+            os.makedirs(videos_dir_path, exist_ok=True)
 
-    logger.info("Initialized a Telegram Syncer")
-
-    # Schedule the job to run every x minutes
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(
-        tes.sync, 
-        'interval', 
-        minutes=REFRESH_EVERY_X_MINUTES, 
-        next_run_time=datetime.datetime.now() + datetime.timedelta(seconds=10)
-    )
-    scheduler.start()
-
-    try:
-        asyncio.get_event_loop().run_forever()
-    except (KeyboardInterrupt, SystemExit):
-        pass
-
+            # Save the video data to a file in the 'Videos' directory
+            with open(os.path.join(videos_dir_path, f"{rand_str}.mp4"), 'wb') as f:
+                print(os.path.join(videos_dir_path, f"{rand_str}.mp4"))
+                f.write(video_data)
     
 if __name__ == "__main__":
     main()
