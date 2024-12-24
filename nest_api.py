@@ -5,7 +5,7 @@ from models import CameraEvent
 from tools import logger
 import xml.etree.ElementTree as ET
 
-class NestDoorbellDevice(object):
+class NestDevice(object):
 
     NEST_API_DOMAIN = "https://nest-camera-frontend.googleapis.com"
 
@@ -31,7 +31,7 @@ class NestDoorbellDevice(object):
         }
         return self._connection.make_nest_get_request(
             self._device_id,
-            NestDoorbellDevice.DOWNLOAD_VIDEO_URI, 
+            NestDevice.DOWNLOAD_VIDEO_URI, 
             params=params
         )
     
@@ -54,7 +54,7 @@ class NestDoorbellDevice(object):
         return self.__parse_events(
             self._connection.make_nest_get_request(
                 self._device_id,
-                NestDoorbellDevice.EVENTS_URI, 
+                NestDevice.EVENTS_URI, 
                 params=params
             )
         )

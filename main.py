@@ -11,10 +11,7 @@ load_dotenv()  # take environment variables from .env.
 GOOGLE_MASTER_TOKEN = os.getenv("GOOGLE_MASTER_TOKEN")
 GOOGLE_USERNAME = os.getenv("GOOGLE_USERNAME")
 assert GOOGLE_MASTER_TOKEN and GOOGLE_USERNAME
-
-def generate_random_string(length: int = 10) -> str:
-    alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
+HOURS_TO_CHECK = 4
 
 def main():
     logger.info("Initializing the Google connection using the master_token")
@@ -27,23 +24,28 @@ def main():
         # Get all the events
         events = nest_device.get_events(
             end_time = pytz.timezone("US/Central").localize(datetime.datetime.now()),
-            duration_minutes= 4*60 # 3 Hours
+            
+            # I THINK THERE'S AN ERROR HERE. TOWARDS THE END OF 3 HOURS, NO EVENTS ARE FOUND.
+            duration_minutes= HOURS_TO_CHECK * 60 
         )
         
-        print(events)
         for event in events:
             # Returns the bytes of the .mp4 video
             video_data = nest_device.download_camera_event(event)
-            rand_str = generate_random_string()
-
+            
+            # Sanitize the filename to remove invalid characters
+            safe_filename = f"{nest_device.device_name}-{int(event.start_time.timestamp()*1000)}.mp4"
+            
             # Create a directory called 'Videos' if it doesn't exist
             videos_dir_path = os.path.join(os.getcwd(), 'Videos')
             os.makedirs(videos_dir_path, exist_ok=True)
 
-            # Save the video data to a file in the 'Videos' directory
-            with open(os.path.join(videos_dir_path, f"{rand_str}.mp4"), 'wb') as f:
-                print(os.path.join(videos_dir_path, f"{rand_str}.mp4"))
-                f.write(video_data)
+            # Check if file already exists before saving
+            safe_filename_with_ext = os.path.join(videos_dir_path, safe_filename)
+            if not os.path.exists(safe_filename_with_ext):
+                with open(safe_filename_with_ext, 'wb') as f:
+                    print(f"Saving video to {safe_filename_with_ext}")
+                    f.write(video_data)
     
 if __name__ == "__main__":
     main()

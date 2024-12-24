@@ -1,6 +1,6 @@
 import datetime
 import requests
-from nest_api import NestDoorbellDevice 
+from nest_api import NestDevice 
 
 from tools import logger
 import glocaltokens.client
@@ -90,7 +90,7 @@ class GoogleConnection(object):
         # This one will list all your home devices
         # One of them would be your Nest Camera, let's find it
         return [
-            NestDoorbellDevice(self, device.device_info.agent_info.unique_id, device.device_name)
+            NestDevice(self, device.device_info.agent_info.unique_id, device.device_name)
             for device in homegraph_response.home.devices
             if "action.devices.traits.CameraStream" in device.traits and "Nest" in device.hardware.model
         ]
