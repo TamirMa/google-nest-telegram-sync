@@ -5,7 +5,7 @@ import pytz
 import os
 import datetime
 
-HOURS_TO_CHECK = 3
+HOURS_TO_CHECK = 12
 
 def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
     logger.info("Initializing the Google connection using the master_token")
