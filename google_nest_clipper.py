@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from app_prefs_database import DatabaseHandler, get_db_path
 from tools import logger
 from google_auth_wrapper import GoogleConnection
 import pytz
@@ -43,10 +44,12 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
                     f.write(video_data)
 
 if __name__ == "__main__":
-    load_dotenv()  # take environment variables from .env.
-    GOOGLE_MASTER_TOKEN = os.getenv("GOOGLE_MASTER_TOKEN")
-    GOOGLE_USERNAME = os.getenv("GOOGLE_USERNAME")
-    VIDEO_SAVE_PATH = os.getenv("VIDEO_SAVE_PATH")
-    assert GOOGLE_MASTER_TOKEN and GOOGLE_USERNAME and VIDEO_SAVE_PATH
-    
-    main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH)
+    print("Google Nest Cliper")
+    print("-------------------")
+    print("\nThis will only run once")
+
+    master_token = input("Please enter master token: ")
+    email = input("Please enter email that is linked to Nest devices: ")
+    video_save_path = input("Please enter path to store Nest clips: ")
+
+    main(master_token, email, video_save_path)
