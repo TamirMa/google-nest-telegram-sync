@@ -23,7 +23,7 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
             duration_minutes= HOURS_TO_CHECK * 60 
         )
         
-        logger.info(('Events for ' + nest_device.device_name + ': '), events)
+        print(('Events for ' + nest_device.device_name + ': '), events)
         for event in events:
             # Returns the bytes of the .mp4 video
             video_data = nest_device.download_camera_event(event)
