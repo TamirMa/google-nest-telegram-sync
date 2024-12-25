@@ -5,10 +5,9 @@ import pytz
 import os
 import datetime
 
+HOURS_TO_CHECK = 3
+
 def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
-
-    HOURS_TO_CHECK = 5
-
     logger.info("Initializing the Google connection using the master_token")
     google_connection = GoogleConnection(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME)
 
@@ -24,6 +23,7 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
             duration_minutes= HOURS_TO_CHECK * 60 
         )
         
+        logger.info(('Events for ' + nest_device.device_name + ': '), events)
         for event in events:
             # Returns the bytes of the .mp4 video
             video_data = nest_device.download_camera_event(event)
@@ -33,9 +33,13 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
             
             # Check if file already exists before saving
             safe_filename_with_ext = os.path.join(VIDEO_SAVE_PATH, safe_filename)
+            
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(safe_filename_with_ext), exist_ok=True)
+
             if not os.path.exists(safe_filename_with_ext):
                 with open(safe_filename_with_ext, 'wb') as f:
-                    print(f"Saving video to {safe_filename_with_ext}")
+                    logger.info(f"Saving video to {safe_filename_with_ext}")
                     f.write(video_data)
 
 if __name__ == "__main__":
