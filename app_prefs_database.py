@@ -29,6 +29,15 @@ class DatabaseHandler:
             cursor.execute("SELECT key, value FROM app_prefs")
             return dict(cursor.fetchall())
         
+    def delete_table(self):
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DROP TABLE IF EXISTS app_prefs")
+
+        conn.close()
+        os.remove(self.db_path)
+
+        
     def get_master_token_creation_date(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()

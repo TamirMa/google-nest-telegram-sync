@@ -14,17 +14,53 @@ class PreAuthGoogleNestClipperApp:
 
   def setup_ui(self):
     self.root.title("Google Nest Clipper")
-    self.root.geometry("300x130")
+    self.root.geometry("400x220")
+    self.root.configure(bg="#f2f2f2")
 
-    tk.Label(self.root, text="Email:").pack()
-    self.email_entry = tk.Entry(self.root)
-    self.email_entry.pack()
+    # Title label
+    title_label = tk.Label(
+      self.root,
+      text="Google Nest Clipper",
+      font=("Helvetica", 16, "bold"),
+      fg="#333333",
+      bg="#f2f2f2",
+      pady=10,
+    )
+    title_label.grid(row=0, column=0, columnspan=2, pady=(10, 20))
 
-    tk.Label(self.root, text="App Password:").pack()
-    self.app_password_entry = tk.Entry(self.root, show='*')
-    self.app_password_entry.pack()
+    # Email label and entry
+    tk.Label(
+      self.root,
+      text="Email:",
+      font=("Helvetica", 10),
+      bg="#f2f2f2",
+    ).grid(row=1, column=0, padx=(20, 10), sticky="e")
+    self.email_entry = tk.Entry(self.root, width=30, font=("Helvetica", 10))
+    self.email_entry.grid(row=1, column=1, padx=(10, 20), pady=5)
 
-    tk.Button(self.root, text="Authenticate", command=self.authenticate).pack()
+    # App Password label and entry
+    tk.Label(
+      self.root,
+      text="App Password:",
+      font=("Helvetica", 10),
+      bg="#f2f2f2",
+    ).grid(row=2, column=0, padx=(20, 10), sticky="e")
+    self.app_password_entry = tk.Entry(self.root, show='*', width=30, font=("Helvetica", 10))
+    self.app_password_entry.grid(row=2, column=1, padx=(10, 20), pady=5)
+
+    # Authenticate button
+    auth_button = tk.Button(
+      self.root,
+      text="Authenticate",
+      command=self.authenticate,
+      font=("Helvetica", 10, "bold"),
+      bg="#4CAF50",
+      fg="white",
+      relief="raised",
+      padx=10,
+      pady=5,
+    )
+    auth_button.grid(row=3, column=0, columnspan=2, pady=(20, 10))
 
   def authenticate(self):
     email = self.email_entry.get()
@@ -39,7 +75,6 @@ class PreAuthGoogleNestClipperApp:
         username=email,
         password=app_password
       )
-      
       master_token = client.get_master_token()
 
       if not master_token:
@@ -58,7 +93,6 @@ class PreAuthGoogleNestClipperApp:
       }
 
       self.db_handler.save_app_prefs(google_nest_clipper_prefs)
-      messagebox.showinfo("Success", "Master Token saved successfully. Starting the application.")
 
       self.root.destroy()
       import auth_app_ui
@@ -68,3 +102,9 @@ class PreAuthGoogleNestClipperApp:
 
     except Exception as e:
       messagebox.showerror("Error", f"Failed to authenticate: {str(e)}")
+
+
+if __name__ == "__main__":
+  root = tk.Tk()
+  app = PreAuthGoogleNestClipperApp(root)
+  root.mainloop()

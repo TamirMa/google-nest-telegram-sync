@@ -10,6 +10,11 @@ class GLocalAuthenticationTokensMultiService(glocaltokens.client.GLocalAuthentic
         super(GLocalAuthenticationTokensMultiService, self).__init__(*args, **kwargs)
 
         self._last_access_token_service = None
+
+    @staticmethod
+    def _escape_username(username: str) -> str:
+        """Escape plus sign for some exotic accounts."""
+        return username.replace("+", "%2B")
     
     def get_access_token(self, service=glocaltokens.client.ACCESS_TOKEN_SERVICE) -> str :
         """Return existing or fetch access_token"""
