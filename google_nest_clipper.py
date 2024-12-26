@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from app_prefs_database import DatabaseHandler, get_db_path
 from tools import logger
 from google_auth_wrapper import GoogleConnection
@@ -20,7 +19,7 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
         events = nest_device.get_events(
             end_time = pytz.timezone("US/Central").localize(datetime.datetime.now()),
             
-            # I THINK THERE'S AN ERROR HERE. TOWARDS THE END OF 3 HOURS, NO EVENTS ARE FOUND.
+            # SOMETHING WEIRD GOING ON HERE. TOWARDS THE END OF HOURS, NO EVENTS ARE FOUND.
             duration_minutes= HOURS_TO_CHECK * 60 
         )
         
@@ -40,7 +39,7 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
 
             if not os.path.exists(safe_filename_with_ext):
                 with open(safe_filename_with_ext, 'wb') as f:
-                    logger.info(f"Saving video to {safe_filename_with_ext}")
+                    print(f"Saving video to {safe_filename_with_ext}")
                     f.write(video_data)
 
 if __name__ == "__main__":

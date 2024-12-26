@@ -1,3 +1,4 @@
+import datetime
 import threading
 import tkinter as tk
 from tkinter import messagebox, filedialog
@@ -15,7 +16,7 @@ class GoogleNestClipperApp:
         self.root.title("Google Nest Clipper")
         self.root.geometry("500x500")
         self.initialize_ui()
-        self.load_env_variables()
+        self.load_app_prefs()
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def initialize_ui(self):
@@ -41,8 +42,10 @@ class GoogleNestClipperApp:
         self.start_stop_button = tk.Button(self.root, text="Start", command=self.toggle_running_state, font=("Arial", 16), height=2, width=10)
         self.start_stop_button.pack(pady=20)
 
-    def load_env_variables(self):
-        google_nest_clipper_prefs = self.db_handler.get_env_variables()
+        print("dsfkndskjf", self.db_handler.get_master_token())
+
+    def load_app_prefs(self):
+        google_nest_clipper_prefs = self.db_handler.get_app_prefs()
         if google_nest_clipper_prefs:
             self.email_entry.insert(0, google_nest_clipper_prefs.get("GOOGLE_USERNAME", ""))
             self.master_token_entry.insert(0, google_nest_clipper_prefs.get("GOOGLE_MASTER_TOKEN", ""))
@@ -66,7 +69,7 @@ class GoogleNestClipperApp:
             self.video_save_path_entry.insert(0, directory)
             self.video_save_path_entry.config(state='readonly')
 
-    def save_env_variables(self):
+    def save_app_prefs(self):
         email = self.email_entry.get()
         master_token = self.master_token_entry.get()
         video_save_path = self.video_save_path_entry.get()
@@ -79,10 +82,11 @@ class GoogleNestClipperApp:
         google_nest_clipper_prefs = {
             "GOOGLE_USERNAME": email,
             "GOOGLE_MASTER_TOKEN": master_token,
+            "MASTER_TOKEN_CREATION_DATE": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             "VIDEO_SAVE_PATH": video_save_path,
             "TIME_TO_REFRESH": time_to_refresh
         }
-        self.db_handler.save_env_variables(google_nest_clipper_prefs)
+        self.db_handler.save_app_prefs(google_nest_clipper_prefs)
         return True
 
     def toggle_running_state(self):
@@ -93,7 +97,7 @@ class GoogleNestClipperApp:
             if self.timer_thread:
                 self.timer_thread.cancel()
         else:
-            if self.save_env_variables():
+            if self.save_app_prefs():
                 self.running = True
                 self.start_stop_button.config(text="Stop")
                 self.set_fields_state("readonly")
@@ -108,7 +112,7 @@ class GoogleNestClipperApp:
         def task():
             if self.running:
                 # Reload the latest environment variables
-                google_nest_clipper_prefs = self.db_handler.get_env_variables()
+                google_nest_clipper_prefs = self.db_handler.get_app_prefs()
 
                 # Pass the updated variables to the main function
                 main(
