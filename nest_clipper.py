@@ -1,18 +1,17 @@
 from app_prefs_database import DatabaseHandler, get_db_path
 from tools import logger
-from google_auth_wrapper import GoogleConnection
+from auth_wrapper import Connection
 import pytz
 import os
 import datetime
 
 HOURS_TO_CHECK = 12
 
-def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
-    logger.info("Initializing the Google connection using the master_token")
-    google_connection = GoogleConnection(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME)
+def main(MASTER_TOKEN, USERNAME, VIDEO_SAVE_PATH):
+    connection = Connection(MASTER_TOKEN, USERNAME)
 
     logger.info("Getting Camera Devices")
-    nest_camera_devices = google_connection.get_nest_camera_devices()
+    nest_camera_devices = connection.get_nest_camera_devices()
     
     for nest_device in nest_camera_devices:
         # Get all the events
@@ -43,7 +42,7 @@ def main(GOOGLE_MASTER_TOKEN, GOOGLE_USERNAME, VIDEO_SAVE_PATH):
                     f.write(video_data)
 
 if __name__ == "__main__":
-    print("Google Nest Cliper")
+    print("Nest Clipper")
     print("-------------------")
     print("\nThis will only run once")
 

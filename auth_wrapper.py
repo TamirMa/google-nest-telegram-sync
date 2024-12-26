@@ -57,15 +57,14 @@ class GLocalAuthenticationTokensMultiService(glocaltokens.client.GLocalAuthentic
             return None
 
 
-class GoogleConnection:
-    NAME = "Google"
+class Connection:
     NEST_SCOPE = "oauth2:https://www.googleapis.com/auth/nest-account"
 
     def __init__(self, master_token, username, password="FAKE_PASSWORD"):
         if not master_token or not username:
             raise ValueError("Master token and username are required.")
 
-        self._google_auth = GLocalAuthenticationTokensMultiService(
+        self._auth = GLocalAuthenticationTokensMultiService(
             master_token=master_token,
             username=username,
             password=password,
@@ -82,7 +81,7 @@ class GoogleConnection:
         url = url.format(device_id=device_id)
         logger.debug("Sending request to: '%s' with params: '%s'", url, params)
 
-        access_token = self._google_auth.get_access_token(service=self.NEST_SCOPE)
+        access_token = self._auth.get_access_token(service=self.NEST_SCOPE)
         if not access_token:
             raise Exception("Couldn't obtain a valid Nest access token.")
 
@@ -104,7 +103,7 @@ class GoogleConnection:
     def get_nest_camera_devices(self):
         """Retrieve all Nest Camera devices from the user's home graph."""
         try:
-            homegraph_response = self._google_auth.get_homegraph()
+            homegraph_response = self._auth.get_homegraph()
             if not homegraph_response or not hasattr(homegraph_response, "home"):
                 logger.error("Invalid or empty HomeGraph response.")
                 return []

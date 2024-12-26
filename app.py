@@ -2,8 +2,8 @@ import os
 import sys
 import tkinter as tk
 from app_prefs_database import check_database_exists
-from auth_app_ui import GoogleNestClipperApp
-from pre_auth_app_ui import PreAuthGoogleNestClipperApp
+from auth_app_ui import NestClipperApp
+from pre_auth_app_ui import PreAuthNestClipperApp
 
 def resource_path(relative_path):
     """Get the absolute path to a resource, works for dev and for PyInstaller."""
@@ -18,9 +18,9 @@ if __name__ == "__main__":
     root.iconphoto(False, icon_image)
 
     if check_database_exists(): # this should also check if master token is valid. not sure how to do that
-        app = GoogleNestClipperApp(root)
+        app = NestClipperApp(root)
         root.mainloop()
 
     else:
-        app = PreAuthGoogleNestClipperApp(root)
+        app = PreAuthNestClipperApp(root)
         root.mainloop()

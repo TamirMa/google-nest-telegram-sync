@@ -3,9 +3,9 @@ import threading
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from app_prefs_database import DatabaseHandler, get_db_path
-from google_nest_clipper import main
+from nest_clipper import main
 
-class GoogleNestClipperApp:
+class NestClipperApp:
     def __init__(self, root):
         self.root = root
         self.running = False
@@ -13,7 +13,7 @@ class GoogleNestClipperApp:
         self.timer_thread = None
         self.db_handler = DatabaseHandler(get_db_path())
 
-        self.root.title("Google Nest Clipper")
+        self.root.title("Nest Clipper")
         self.root.geometry("580x370")
         self.root.configure(bg="#f2f2f2")
         self.initialize_ui()
@@ -24,7 +24,7 @@ class GoogleNestClipperApp:
         # Title Label
         title_label = tk.Label(
             self.root,
-            text="Google Nest Clipper",
+            text="Nest Clipper",
             font=("Helvetica", 18, "bold"),
             fg="#333333",
             bg="#f2f2f2",
@@ -103,15 +103,15 @@ class GoogleNestClipperApp:
         logout_button.place(relx=0.95, rely=0.95, anchor="se")  # Bottom right corner
 
     def load_app_prefs(self):
-        google_nest_clipper_prefs = self.db_handler.get_app_prefs()
-        if google_nest_clipper_prefs:
-            self.email_entry.insert(0, google_nest_clipper_prefs.get("GOOGLE_USERNAME", ""))
-            self.master_token_entry.insert(0, google_nest_clipper_prefs.get("GOOGLE_MASTER_TOKEN", ""))
+        nest_clipper_prefs = self.db_handler.get_app_prefs()
+        if nest_clipper_prefs:
+            self.email_entry.insert(0, nest_clipper_prefs.get("USERNAME", ""))
+            self.master_token_entry.insert(0, nest_clipper_prefs.get("MASTER_TOKEN", ""))
             self.video_save_path_entry.config(state="normal")
-            self.video_save_path_entry.insert(0, google_nest_clipper_prefs.get("VIDEO_SAVE_PATH", ""))
+            self.video_save_path_entry.insert(0, nest_clipper_prefs.get("VIDEO_SAVE_PATH", ""))
             self.video_save_path_entry.config(state="readonly")
-            self.time_to_refresh_entry.insert(0, google_nest_clipper_prefs.get("TIME_TO_REFRESH"))
-            self.refresh_interval = int(google_nest_clipper_prefs.get("TIME_TO_REFRESH"))
+            self.time_to_refresh_entry.insert(0, nest_clipper_prefs.get("TIME_TO_REFRESH"))
+            self.refresh_interval = int(nest_clipper_prefs.get("TIME_TO_REFRESH"))
 
     def logout(self):
         if messagebox.askyesno(
@@ -123,7 +123,7 @@ class GoogleNestClipperApp:
                 self.root.destroy()
                 import pre_auth_app_ui
                 root = tk.Tk()
-                app = pre_auth_app_ui.PreAuthGoogleNestClipperApp(root)
+                app = pre_auth_app_ui.PreAuthNestClipperApp(root)
                 root.mainloop()
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to log out: {str(e)}")
@@ -152,14 +152,14 @@ class GoogleNestClipperApp:
             messagebox.showerror("Error", "All fields are required.")
             return False
 
-        google_nest_clipper_prefs = {
-            "GOOGLE_USERNAME": email,
-            "GOOGLE_MASTER_TOKEN": master_token,
+        nest_clipper_prefs = {
+            "USERNAME": email,
+            "MASTER_TOKEN": master_token,
             "MASTER_TOKEN_CREATION_DATE": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             "VIDEO_SAVE_PATH": video_save_path,
             "TIME_TO_REFRESH": time_to_refresh,
         }
-        self.db_handler.save_app_prefs(google_nest_clipper_prefs)
+        self.db_handler.save_app_prefs(nest_clipper_prefs)
         return True
 
     def toggle_running_state(self):
@@ -184,14 +184,14 @@ class GoogleNestClipperApp:
     def start_periodic_task(self):
         def task():
             if self.running:
-                google_nest_clipper_prefs = self.db_handler.get_app_prefs()
+                nest_clipper_prefs = self.db_handler.get_app_prefs()
                 main(
-                    google_nest_clipper_prefs.get("GOOGLE_MASTER_TOKEN", ""),
-                    google_nest_clipper_prefs.get("GOOGLE_USERNAME", ""),
-                    google_nest_clipper_prefs.get("VIDEO_SAVE_PATH", ""),
+                    nest_clipper_prefs.get("MASTER_TOKEN", ""),
+                    nest_clipper_prefs.get("USERNAME", ""),
+                    nest_clipper_prefs.get("VIDEO_SAVE_PATH", ""),
                 )
                 self.refresh_interval = int(
-                    google_nest_clipper_prefs.get("TIME_TO_REFRESH", self.refresh_interval)
+                    nest_clipper_prefs.get("TIME_TO_REFRESH", self.refresh_interval)
                 )
                 if self.running:
                     self.timer_thread = threading.Timer(self.refresh_interval, task)
@@ -202,5 +202,5 @@ class GoogleNestClipperApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = GoogleNestClipperApp(root)
+    app = NestClipperApp(root)
     root.mainloop()

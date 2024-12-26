@@ -4,7 +4,7 @@ from tkinter import messagebox, filedialog
 from app_prefs_database import DatabaseHandler, get_db_path
 from glocaltokens.client import GLocalAuthenticationTokens
 
-class PreAuthGoogleNestClipperApp:
+class PreAuthNestClipperApp:
   def __init__(self, root):
     self.root = root
     self.email_entry = None
@@ -13,14 +13,14 @@ class PreAuthGoogleNestClipperApp:
     self.setup_ui()
 
   def setup_ui(self):
-    self.root.title("Google Nest Clipper")
+    self.root.title("Nest Clipper")
     self.root.geometry("400x220")
     self.root.configure(bg="#f2f2f2")
 
     # Title label
     title_label = tk.Label(
       self.root,
-      text="Google Nest Clipper",
+      text="Nest Clipper",
       font=("Helvetica", 16, "bold"),
       fg="#333333",
       bg="#f2f2f2",
@@ -63,8 +63,8 @@ class PreAuthGoogleNestClipperApp:
     auth_button.grid(row=3, column=0, columnspan=2, pady=(20, 10))
 
   def authenticate(self):
-    email = self.email_entry.get()
-    app_password = self.app_password_entry.get()
+    email = self.email_entry.get().strip()
+    app_password = self.app_password_entry.get().strip()
 
     if not email or not app_password:
       messagebox.showerror("Error", "Both Email and App Password are required.")
@@ -84,20 +84,20 @@ class PreAuthGoogleNestClipperApp:
       if self.db_handler is None:
         self.db_handler = DatabaseHandler(get_db_path())
 
-      google_nest_clipper_prefs = {
-        "GOOGLE_USERNAME": email,
-        "GOOGLE_MASTER_TOKEN": master_token,
+      nest_clipper_prefs = {
+        "USERNAME": email,
+        "MASTER_TOKEN": master_token,
         "MASTER_TOKEN_CREATION_DATE": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         "VIDEO_SAVE_PATH": "",
         "TIME_TO_REFRESH": "3600"
       }
 
-      self.db_handler.save_app_prefs(google_nest_clipper_prefs)
+      self.db_handler.save_app_prefs(nest_clipper_prefs)
 
       self.root.destroy()
       import auth_app_ui
       root = tk.Tk()
-      app = auth_app_ui.GoogleNestClipperApp(root)
+      app = auth_app_ui.NestClipperApp(root)
       root.mainloop()
 
     except Exception as e:
@@ -106,5 +106,5 @@ class PreAuthGoogleNestClipperApp:
 
 if __name__ == "__main__":
   root = tk.Tk()
-  app = PreAuthGoogleNestClipperApp(root)
+  app = PreAuthNestClipperApp(root)
   root.mainloop()

@@ -12,8 +12,8 @@ class NestDevice(object):
     EVENTS_URI = NEST_API_DOMAIN + "/dashmanifest/namespace/nest-phoenix-prod/device/{device_id}"
     DOWNLOAD_VIDEO_URI = NEST_API_DOMAIN + "/mp4clip/namespace/nest-phoenix-prod/device/{device_id}"
 
-    def __init__(self, google_auth_connection, device_id, device_name):
-        self._connection = google_auth_connection
+    def __init__(self, auth_connection, device_id, device_name):
+        self._connection = auth_connection
         self._device_id = device_id
         self._device_name = device_name
 
